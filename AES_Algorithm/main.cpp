@@ -39,6 +39,25 @@ int main() {
             return 1;
         }
     }
+    unsigned char expected[16] = {
+        0x00, 0x10, 0x20, 0x30,
+        0x40, 0x50, 0x60, 0x70,
+        0x80, 0x90, 0xa0, 0xb0,
+        0xc0, 0xd0, 0xe0, 0xf0
+    };
+
+    aes.setState(input);
+    aes.addRoundKey(0);
+    aes.getState(result);
+
+    for (int i = 0; i < 16; i++) {
+        if (result[i] != expected[i]) {
+            cout << "AddRoundKey sai tai byte " << i << endl;
+            return 1;
+        }
+    }
+
+    cout << "OK" << endl;
 
 
     return 0;

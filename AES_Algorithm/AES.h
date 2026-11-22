@@ -12,7 +12,6 @@ private:
     void subBytes();
     void shiftRows();
     void mixColumns();
-    void addRoundKey(int round);
 
     void invSubBytes();
     void invShiftRows();
@@ -24,4 +23,5 @@ public:
 
     void getState(unsigned char output[16]);
     void setState(unsigned char input[16]);
+    void addRoundKey(int round);
 };

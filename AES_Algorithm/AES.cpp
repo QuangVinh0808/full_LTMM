@@ -36,6 +36,10 @@ void AES::setState(unsigned char input[16]) {
 }
 
 void AES::addRoundKey(int round) {
+    if (round < 0 || round > 10) {
+        std::cout << "Round khong hop le: " << round << std::endl;
+        return;
+    }
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             int index = round * 16 + col * 4 + row;

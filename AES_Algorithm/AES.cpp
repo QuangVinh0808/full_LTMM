@@ -26,3 +26,11 @@ void AES::getState(unsigned char output[16]) {
         }
         cout << dec << setfill(' ');
     }
+
+void AES::setState(unsigned char input[16]) {
+    for (int row = 0; row < 4; row++) {
+        for (int col = 0; col < 4; col++) {
+            state[row][col] = input[row * 4 + col];
+        }
+    }
+}

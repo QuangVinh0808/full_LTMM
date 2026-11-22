@@ -23,7 +23,23 @@ int main() {
         }
     }
 
-    cout << "ok" << endl;
+    unsigned char input[16] = {
+        0x00, 0x11, 0x22, 0x33,
+        0x44, 0x55, 0x66, 0x77,
+        0x88, 0x99, 0xaa, 0xbb,
+        0xcc, 0xdd, 0xee, 0xff
+    };
+    aes.setState(input);
+    aes.getState(result);
+
+    for(int i = 0; i < 16; i++) {
+        if (result[i] != input[i]) {
+            cout << "state tai byte " << i << " khong bang voi input!" << endl;
+
+            return 1;
+        }
+    }
+
 
     return 0;
 }

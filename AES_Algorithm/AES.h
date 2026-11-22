@@ -23,4 +23,5 @@ public:
     AES(unsigned char key[16]);
 
     void getState(unsigned char output[16]);
+    void setState(unsigned char input[16]);
 };

@@ -146,5 +146,55 @@ int main() {
     }
 
     cout << "PASS: MixColumns." << endl;
+        cout << endl << "Test KeyExpansion:" << endl;
+
+    unsigned char expectedKey1[16] = {
+        0xd6, 0xaa, 0x74, 0xfd,
+        0xd2, 0xaf, 0x72, 0xfa,
+        0xda, 0xa6, 0x78, 0xf1,
+        0xd6, 0xab, 0x76, 0xfe
+    };
+
+    unsigned char key1[16];
+    aes.getRoundKey(1, key1);
+
+    for (int i = 0; i < 16; i++) {
+        if (key1[i] != expectedKey1[i]) {
+            cout << "Khoa vong 1 sai tai byte " << i << endl;
+            return 1;
+        }
+    }
+
+    cout << "Khoa vong 1 ok!" << endl;
+    cout << endl << "Test vong ma hoa thu nhat:" << endl;
+
+    unsigned char expectedRound1[16] = {
+        0x89, 0xd8, 0x10, 0xe8,
+        0x85, 0x5a, 0xce, 0x68,
+        0x2d, 0x18, 0x43, 0xd8,
+        0xcb, 0x12, 0x8f, 0xe4
+    };
+
+    aes.setState(input);
+
+    // Cong khoa ban dau.
+    aes.addRoundKey(0);
+
+    // Vong ma hoa thu nhat.
+    aes.subBytes();
+    aes.shiftRows();
+    aes.mixColumns();
+    aes.addRoundKey(1);
+
+    aes.getState(result);
+
+    for (int i = 0; i < 16; i++) {
+        if (result[i] != expectedRound1[i]) {
+            cout << "Vong 1 sai tai byte " << i << endl;
+            return 1;
+        }
+    }
+
+    cout << "Vong ma hoa thu nhat ok !" << endl;
     return 0;
 }

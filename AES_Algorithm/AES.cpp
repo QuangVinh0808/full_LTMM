@@ -24,10 +24,14 @@ const unsigned char SBOX[256] = {
     0x8c,0xa1,0x89,0x0d,0xbf,0xe6,0x42,0x68,0x41,0x99,0x2d,0x0f,0xb0,0x54,0xbb,0x16
 };
 
+const unsigned char RCON[10] = {
+    0x01, 0x02, 0x04, 0x08, 0x10,
+    0x20, 0x40, 0x80, 0x1b, 0x36
+};
+
 AES::AES(unsigned char key[16]) {
-    for (int i = 0; i < 16; i++) {
-        roundKey[i] = key[i];
-    }
+    keyExpansion(key);
+
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             state[row][col] = 0;
@@ -117,5 +121,47 @@ void AES::mixColumns() {
         state[1][col] = a ^ multiply(b, 2) ^ multiply(c, 3) ^ d;
         state[2][col] = a ^ b ^ multiply(c, 2) ^ multiply(d, 3);
         state[3][col] = multiply(a, 3) ^ b ^ c ^ multiply(d, 2);
+    }
+}
+void AES::keyExpansion(unsigned char key[16]) {
+    for (int i = 0; i < 16; i++) {
+        roundKey[i] = key[i];
+    }
+
+    for (int i = 4; i < 44; i++) {
+        unsigned char temp[4];
+        for (int j = 0; j < 4; j++) {
+            temp[j] = roundKey[(i - 1) * 4 + j];
+        }
+
+        if (i % 4 == 0) { // dich trai
+            unsigned char first = temp[0];
+            temp[0] = temp[1];
+            temp[1] = temp[2];
+            temp[2] = temp[3];
+            temp[3] = first;
+
+            for (int j = 0; j < 4; j++) {
+                temp[j] = SBOX[temp[j]];
+            }
+
+            // XOR hang so vong vao byte dau
+            temp[0] ^= RCON[i / 4 - 1];
+        }
+
+        for (int j = 0; j < 4; j++) {
+            roundKey[i * 4 + j] =
+                roundKey[(i - 4) * 4 + j] ^ temp[j];
+        }
+    }
+}
+void AES::getRoundKey(int round, unsigned char output[16]) {
+    if (round < 0 || round > 10) {
+        cout << "Vong khong hop le!" << endl;
+        return;
+    }
+
+    for (int i = 0; i < 16; i++) {
+        output[i] = roundKey[round * 16 + i];
     }
 }

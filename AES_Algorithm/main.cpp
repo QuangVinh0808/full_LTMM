@@ -98,5 +98,53 @@ int main() {
             return 1;
         }
     }
+        cout << endl << "Test multiply:" << endl;
+
+    // Moi hang gom: a, b, ket qua mong doi.
+    unsigned char multiplyTests[5][3] = {
+        {0x57, 0x83, 0xc1},
+        {0x26, 0x9e, 0x2f},
+        {0x53, 0xca, 0x01},
+        {0x80, 0x02, 0x1b},
+        {0x00, 0x02, 0x00}
+    };
+
+    for (int i = 0; i < 5; i++) {
+        unsigned char actual = aes.multiply(
+            multiplyTests[i][0],
+            multiplyTests[i][1]
+        );
+
+        if (actual != multiplyTests[i][2]) {
+            cout << "Multiply sai tai test " << i << endl;
+            return 1;
+        }
+    }
+    cout << "PASS: multiply." << endl;
+        cout << endl << "Test MixColumns:" << endl;
+
+    unsigned char expectedMixColumns[16] = {
+        0x5f, 0x72, 0x64, 0x15,
+        0x57, 0xf5, 0xbc, 0x92,
+        0xf7, 0xbe, 0x3b, 0x29,
+        0x1d, 0xb9, 0xf9, 0x1a
+    };
+
+    aes.setState(input);
+    aes.addRoundKey(0);
+    aes.subBytes();
+    aes.shiftRows();
+
+    aes.mixColumns();
+    aes.getState(result);
+
+    for (int i = 0; i < 16; i++) {
+        if (result[i] != expectedMixColumns[i]) {
+            cout << "MixColumns sai tai byte " << i << endl;
+            return 1;
+        }
+    }
+
+    cout << "PASS: MixColumns." << endl;
     return 0;
 }

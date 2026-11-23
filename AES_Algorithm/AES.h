@@ -9,13 +9,11 @@ private:
     unsigned char state[4][4];
     unsigned char invSbox[256];
 
-    void mixColumns();
-
     void invSubBytes();
     void invShiftRows();
     void invMixColumns();
 
-    unsigned char multiply(unsigned char a, unsigned char b);
+    
 public:
     AES(unsigned char key[16]);
 
@@ -24,4 +22,6 @@ public:
     void addRoundKey(int round);
     void subBytes();
     void shiftRows();
+    unsigned char multiply(unsigned char a, unsigned char b);
+    void mixColumns();
 };

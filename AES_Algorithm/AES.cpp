@@ -89,3 +89,33 @@ void AES::shiftRows() {
         }
     }
 }
+
+unsigned char AES::multiply(unsigned char a, unsigned char b) {
+    unsigned char result = 0;
+    for (int i = 0; i < 8; i++) {
+        if (b & 1) {
+            result ^= a;
+        }
+        bool highBit = (a & 0x80) != 0; // lấy bit cao nhất của a
+        a = (unsigned char)(a << 1);
+        if (highBit) {
+            a ^= 0x1b; // rut gon theo đa thức x^8 + x^4 + x^3 + x + 1
+        }
+        b = b >> 1;
+    }
+
+    return result;
+}
+void AES::mixColumns() {
+    for (int col = 0; col < 4; col++) {
+        unsigned char a = state[0][col];
+        unsigned char b = state[1][col];
+        unsigned char c = state[2][col];
+        unsigned char d = state[3][col];
+
+        state[0][col] = multiply(a, 2) ^ multiply(b, 3) ^ c ^ d;
+        state[1][col] = a ^ multiply(b, 2) ^ multiply(c, 3) ^ d;
+        state[2][col] = a ^ b ^ multiply(c, 2) ^ multiply(d, 3);
+        state[3][col] = multiply(a, 3) ^ b ^ c ^ multiply(d, 2);
+    }
+}

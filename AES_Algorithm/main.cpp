@@ -59,6 +59,25 @@ int main() {
 
     cout << "OK" << endl;
 
+    unsigned char expectedSubBytes[16] = {
+        0x63, 0xca, 0xb7, 0x04,
+        0x09, 0x53, 0xd0, 0x51,
+        0xcd, 0x60, 0xe0, 0xe7,
+        0xba, 0x70, 0xe1, 0x8c
+    };
+    aes.setState(input); // bdau lại
+    aes.addRoundKey(0);
+    aes.subBytes();
+    aes.getState(result);
+
+    for (int i = 0; i < 16; i++) {
+        if (result[i] != expectedSubBytes[i]) {
+            cout << "SubBytes sai tai byte " << i << endl;
+            return 1;
+        }
+    }
+
+    cout << "PASS: SubBytes." << endl;
 
     return 0;
 }

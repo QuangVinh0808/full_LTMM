@@ -77,3 +77,15 @@ void AES::subBytes() {
         }
     }
 }
+void AES::shiftRows() {
+    for (int row = 1; row < 4; row++) {
+        unsigned char temp[4];
+
+        for (int col = 0; col < 4; col++) {
+            temp[col] = state[row][(col + row) % 4]; // dich trai
+        }
+        for (int col = 0; col < 4; col++) {
+            state[row][col] = temp[col];
+        }
+    }
+}

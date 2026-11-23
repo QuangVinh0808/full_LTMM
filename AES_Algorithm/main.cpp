@@ -77,7 +77,26 @@ int main() {
         }
     }
 
-    cout << "PASS: SubBytes." << endl;
+    cout << endl << "Test ShiftRows:" << endl;
 
+    unsigned char expectedShiftRows[16] = {
+        0x63, 0x53, 0xe0, 0x8c,
+        0x09, 0x60, 0xe1, 0x04,
+        0xcd, 0x70, 0xb7, 0x51,
+        0xba, 0xca, 0xd0, 0xe7
+    };
+    aes.setState(input);
+    aes.addRoundKey(0);
+    aes.subBytes();
+
+    aes.shiftRows();
+    aes.getState(result);
+
+    for (int i = 0; i < 16; i++) {
+        if (result[i] != expectedShiftRows[i]) {
+            cout << "ShiftRows sai tai byte " << i << endl;
+            return 1;
+        }
+    }
     return 0;
 }

@@ -9,7 +9,6 @@ private:
     unsigned char state[4][4];
     unsigned char invSbox[256];
 
-    void shiftRows();
     void mixColumns();
 
     void invSubBytes();
@@ -24,4 +23,5 @@ public:
     void setState(unsigned char input[16]);
     void addRoundKey(int round);
     void subBytes();
+    void shiftRows();
 };

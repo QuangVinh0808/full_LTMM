@@ -27,4 +27,6 @@ public:
     void shiftRows();
     unsigned char multiply(unsigned char a, unsigned char b);
     void mixColumns();
+
+    void decrypt(unsigned char input[16], unsigned char output[16]);
 };

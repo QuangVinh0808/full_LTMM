@@ -32,6 +32,10 @@ const unsigned char RCON[10] = {
 AES::AES(unsigned char key[16]) {
     keyExpansion(key);
 
+    for(int i = 0; i < 256; i++) {
+        invSbox[SBOX[i]] = (unsigned char)i;
+    }
+
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             state[row][col] = 0;
@@ -163,5 +167,62 @@ void AES::getRoundKey(int round, unsigned char output[16]) {
 
     for (int i = 0; i < 16; i++) {
         output[i] = roundKey[round * 16 + i];
+    }
+}
+void AES::invSubBytes() {
+    for (int row = 0; row < 4; row++) {
+        for (int col = 0; col < 4; col++) {
+            unsigned char temp = state[row][col];
+            state[row][col] = invSbox[temp];
+        }
+    }
+}
+
+void AES::invShiftRows() {
+    for (int row = 1; row < 4; row++) {
+        unsigned char temp[4];
+
+        for (int col = 0; col < 4; col++) {
+            temp[col] = state[row][(col - row + 4) % 4]; // dich phai
+        }
+        for (int col = 0; col < 4; col++) {
+            state[row][col] = temp[col];
+        }
+    }
+}
+void AES::invMixColumns() {
+    for (int col = 0; col < 4; col++) {
+        unsigned char a = state[0][col];
+        unsigned char b = state[1][col];
+        unsigned char c = state[2][col];
+        unsigned char d = state[3][col];
+
+        state[0][col] = multiply(a, 14) ^ multiply(b, 11) ^ multiply(c, 13) ^ multiply(d, 9);
+        state[1][col] = multiply(a, 9) ^ multiply(b, 14) ^ multiply(c, 11) ^ multiply(d, 13);
+        state[2][col] = multiply(a, 13) ^ multiply(b, 9) ^ multiply(c, 14) ^ multiply(d, 11);
+        state[3][col] = multiply(a, 11) ^ multiply(b, 13) ^ multiply(c, 9) ^ multiply(d, 14);
+    }
+}
+
+void AES::decrypt(unsigned char input[16], unsigned char output[16]) {
+    setState(input);
+    addRoundKey(10);
+
+    for (int round = 9; round >= 1; round--) { // giai nguoc
+        invShiftRows();
+        invSubBytes();
+        addRoundKey(round);
+        invMixColumns();
+    }
+
+    // cai cuoi cung
+    invShiftRows();
+    invSubBytes();
+    addRoundKey(0); 
+
+    for (int row = 0; row < 4; row++) {
+        for (int col = 0; col < 4; col++) {
+            output[col * 4 + row] = state[row][col];
+        }
     }
 }

@@ -194,7 +194,27 @@ int main() {
             return 1;
         }
     }
-
     cout << "Vong ma hoa thu nhat ok !" << endl;
+
+    cout << endl << "Test AES-128 decrypt:" << endl;
+    unsigned char expectedCiphertext[16] = {
+        0x69, 0xc4, 0xe0, 0xd8,
+        0x6a, 0x7b, 0x04, 0x30,
+        0xd8, 0xcd, 0xb7, 0x80,
+        0x70, 0xb4, 0xc5, 0x5a
+    };
+    unsigned char decrypted[16];
+
+    aes.decrypt(expectedCiphertext, decrypted);
+    aes.getState(result);
+
+    for (int i = 0; i < 16; i++) {
+        if (decrypted[i] != input[i]) {
+            cout << "Decrypt sai tai byte " << i << endl;
+            return 1;
+        }
+    }
+
+    cout << "AES-128 decrypt ok!" << endl;
     return 0;
 }
